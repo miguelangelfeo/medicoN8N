@@ -2,134 +2,121 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Lector de exámenes médicos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedAI · Analizador de exámenes médicos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
 <!-- NAVBAR -->
-
-<nav class="navbar">
-  <div class="nav-container">
-    <div class="logo">MedAI</div>
-    <div class="nav-links">
-      <a href="#intro">Inicio</a>
-      <a href="#tool">Analizador</a>
-    </div>
+<nav class="nav">
+  <div class="nav-logo"><span>🩺</span> MedAI</div>
+  <div class="nav-links">
+    <a onclick="document.getElementById('inicio').scrollIntoView({behavior:'smooth'})">Inicio</a>
+    <a onclick="document.getElementById('analizador').scrollIntoView({behavior:'smooth'})">Analizador</a>
   </div>
 </nav>
 
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-badge">Analizador de exámenes médicos</div>
+  <h1>Entiende tus resultados<br><em>sin complicaciones</em></h1>
+  <p>Sube tus exámenes de laboratorio o escribe los valores. El sistema los analiza y los explica en lenguaje simple usando referencias clínicas validadas.</p>
+  <button class="hero-cta" onclick="document.getElementById('analizador').scrollIntoView({behavior:'smooth'})">
+    Analizar mis exámenes
+  </button>
+</section>
 
-<!-- SECCION INTRO -->
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-n">6</div><div class="stat-l">Categorías de análisis</div></div>
+  <div class="stat"><div class="stat-n">4</div><div class="stat-l">Tipos de entrada</div></div>
+  <div class="stat"><div class="stat-n">100%</div><div class="stat-l">En español colombiano</div></div>
+</div>
 
-<section class="intro" id="intro">
-
-  <div class="intro-container">
-
-    <h1>🧪 Entiende tus exámenes médicos fácilmente</h1>
-
-    <p>
-      Muchas personas reciben resultados médicos difíciles de interpretar.
-      Esta herramienta analiza tus valores de laboratorio y los explica en
-      lenguaje simple para ayudarte a entender mejor tu salud.
-    </p>
-
+<!-- HERRAMIENTA -->
+<div class="tool" id="analizador">
+  <div class="tool-header">
+    <h2>Analizar resultados</h2>
+    <p>Ingresa tus valores de laboratorio en texto, o sube el documento directamente.</p>
   </div>
 
-</section>
+  <div class="card">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('texto',this)"><span class="tab-icon">✏️</span> Texto</button>
+      <button class="tab-btn" onclick="switchTab('pdf',this)"><span class="tab-icon">📄</span> PDF</button>
+      <button class="tab-btn" onclick="switchTab('word',this)"><span class="tab-icon">📝</span> Word</button>
+      <button class="tab-btn" onclick="switchTab('audio',this)"><span class="tab-icon">🎙</span> Audio</button>
+    </div>
 
+    <!-- TEXTO -->
+    <div id="panel-texto" class="panel active">
+      <label>Escribe los valores de tus exámenes</label>
+      <textarea id="textInput" placeholder="Ej: glucosa 115 mg/dL, colesterol total 210 mg/dL, hemoglobina 12.5 g/dL..."></textarea>
+    </div>
 
+    <!-- PDF -->
+    <div id="panel-pdf" class="panel">
+      <div class="upload-zone" onclick="document.getElementById('pdfInput').click()">
+        <input type="file" id="pdfInput" accept=".pdf" onchange="handleFile('pdf',this)">
+        <div class="upload-icon" style="background:#FCEBEB;">📄</div>
+        <p>Haz clic para subir tu PDF</p>
+        <small>Archivos .pdf · hasta 10 MB</small>
+        <div class="upload-name" id="pdf-name"></div>
+      </div>
+    </div>
 
-<!-- SECCION HERRAMIENTA -->
+    <!-- WORD -->
+    <div id="panel-word" class="panel">
+      <div class="upload-zone" onclick="document.getElementById('wordInput').click()">
+        <input type="file" id="wordInput" accept=".doc,.docx" onchange="handleFile('word',this)">
+        <div class="upload-icon" style="background:#E6F1FB;">📝</div>
+        <p>Haz clic para subir tu documento Word</p>
+        <small>Archivos .doc / .docx · hasta 10 MB</small>
+        <div class="upload-name" id="word-name"></div>
+      </div>
+    </div>
 
-<section class="tool-section" id="tool">
+    <!-- AUDIO -->
+    <div id="panel-audio" class="panel">
+      <div class="upload-zone" onclick="document.getElementById('audioInput').click()">
+        <input type="file" id="audioInput" accept="audio/*" onchange="handleFile('audio',this)">
+        <div class="upload-icon" style="background:#E1F5EE;">🎙</div>
+        <p>Haz clic para subir tu audio</p>
+        <small>MP3, WAV, M4A · hasta 25 MB</small>
+        <div class="upload-name" id="audio-name"></div>
+      </div>
+    </div>
 
-<div class="tool-container">
+    <div class="send-wrap">
+      <button class="send-btn" id="sendBtn" onclick="enviar()">
+        <span id="btnIcon">🔍</span>
+        <span id="btnText">Analizar resultados</span>
+      </button>
+    </div>
+  </div>
 
-<h2>Analizar resultados médicos</h2>
+  <!-- RESULTADO -->
+  <div class="result-wrap" id="resultWrap">
+    <div class="result-header">
+      <div class="result-dot" id="resultDot"></div>
+      <span class="result-label" id="resultLabel">Procesando...</span>
+    </div>
+    <div class="result-body" id="resultBody"></div>
+  </div>
 
-<p class="tool-desc">
-Sube un archivo con tus resultados o escribe los valores directamente.
-El sistema interpretará los resultados automáticamente.
-</p>
-
-
-<div class="card">
-
-<div class="tabs">
-<div class="tab active" onclick="switchTab('texto')">Texto</div>
-<div class="tab" onclick="switchTab('pdf')">PDF</div>
-<div class="tab" onclick="switchTab('word')">Word</div>
-<div class="tab" onclick="switchTab('audio')">Audio</div>
+  <div class="disclaimer">
+    ⚠️ Esta herramienta es educativa. No reemplaza la consulta con un profesional de salud. Siempre verifica tus resultados con tu médico.
+  </div>
 </div>
 
-
-
-<div id="tab-texto" class="section active">
-<label>Escribe los valores de tus resultados medicos</label>
-<textarea id="textInput" placeholder="Ej: glucosa 115 mg/dL"></textarea>
-</div>
-
-
-
-<div id="tab-pdf" class="section">
-<div class="upload-area" onclick="document.getElementById('pdfInput').click()">
-<input type="file" id="pdfInput" accept=".pdf" onchange="handleFile('pdf')">
-<p>Subir archivo PDF con resultados medicos</p>
-<div class="file-name" id="pdf-name"></div>
-</div>
-</div>
-
-
-
-<div id="tab-word" class="section">
-<div class="upload-area" onclick="document.getElementById('wordInput').click()">
-<input type="file" id="wordInput" accept=".doc,.docx" onchange="handleFile('word')">
-<p>Subir archivo Word con resultados medicos</p>
-<div class="file-name" id="word-name"></div>
-</div>
-</div>
-
-
-
-<div id="tab-audio" class="section">
-<div class="upload-area" onclick="document.getElementById('audioInput').click()">
-<input type="file" id="audioInput" accept="audio/*" onchange="handleFile('audio')">
-<p>Subir archivo de audio</p>
-<div class="file-name" id="audio-name"></div>
-</div>
-</div>
-
-
-<button class="send" id="sendBtn" onclick="enviar()">
-Analizar resultados
-</button>
-
-</div>
-
-
-
-<div class="result-card" id="resultCard" style="display:none">
-
-<p class="status" id="statusText"></p>
-
-<div class="result" id="resultText"></div>
-
-</div>
-
-
-</div>
-
-</section>
-
-
+<!-- FOOTER -->
 <footer class="footer">
-Proyecto de análisis automático de resultados médicos
+  MedAI · Proyecto académico de automatización con n8n · Colombia
 </footer>
 
-
 <script src="app.js"></script>
-
 </body>
 </html>
