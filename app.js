@@ -1,10 +1,4 @@
-// ===========================
-//  MedAI — Lógica principal
-// ===========================
-
-// URL del webhook de n8n
-// IMPORTANTE: usa la URL de producción (sin "-test") cuando el flujo esté activo
-const WEBHOOK_URL = "https://juandavidsg321.app.n8n.cloud/webhook/c8bf1a26-6f9a-4c7d-a5aa-fbb902cfecef";
+const WEBHOOK_URL = "https://nicolasorco.app.n8n.cloud/webhook-test/c8bf1a26-6f9a-4c7d-a5aa-fbb902cfecef";
 
 let tabActual = 'texto';
 let archivos = {};
